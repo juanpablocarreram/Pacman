@@ -33,7 +33,7 @@ DimBoard = 400
 textures = []
 #Nombre de los archivos a usar
 BASE_PATH = os.path.abspath(os.path.dirname(__file__))
-file_1 = os.path.join(BASE_PATH, 'mapa.bmp')
+img_map = os.path.join(BASE_PATH, 'mapa.bmp')
 img_pacman = os.path.join(BASE_PATH, 'pacman.bmp')
 img_ghost1 = os.path.join(BASE_PATH, 'fantasma1.bmp')
 img_ghost2 = os.path.join(BASE_PATH, 'fantasma2.bmp')
@@ -145,7 +145,7 @@ def Init():
     glClearColor(0,0,0,0)
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
     #textures[0]: plano
-    Texturas(file_1)
+    Texturas(img_map)
     #textures[1]: pacman
     Texturas(img_pacman)
     #textures[2]: fantasma1
@@ -196,12 +196,9 @@ clock = pygame.time.Clock()
 direccionPacman = [0, 0]
 while not done:
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+        if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             done = True
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                done = True
-
+    """ Check for key presses and update Pacman's direction """
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
         direccionPacman = [-1, 0]

@@ -32,10 +32,12 @@ class Pacman:
     def loadTextures(self, texturas, id):
         self.texturas = texturas
         self.Id = id
+    """ Funcion para detectar la esquina en la cual se encuentra pacman (-1 si no se encuentra en una esquina)"""
     def esquinaActual(self):
         if self.XPxToMC[self.x] != -1 and self.YPxToMC[self.y] != -1:
             return self.MC[self.YPxToMC[self.y]][self.XPxToMC[self.x]]
         return -1
+    """Funcion para detectar colisiones con paredes y mover al pacman en la direccion dada por el usuario"""
     def performObjectCollisionLogic(self):
         esquinaActual = self.esquinaActual()
         if esquinaActual != -1 and esquinaActual != 0:
@@ -58,6 +60,7 @@ class Pacman:
                     self.update(self.direccion)
                 else:
                     self.update([0,0])
+    """ Funcion para actualizar la direccion en base a entradas del usuario y a la posicion actual del pacman"""
     def update(self, dir):
         #Si el pacman se encuentra en estado inicial del juego, se le asigna una direccion de movimiento
         if self.start == 1:
@@ -71,6 +74,7 @@ class Pacman:
             self.angulo_direccion = math.atan2(self.direccion[1], self.direccion[0]) * 180 / math.pi
             if self.angulo_direccion < 0:
                 self.angulo_direccion += 360
+    """ Funcion para renderizar (dibujar) el pacman """
     def draw(self):
         self.x += self.direccion[0] * self.velocidad
         self.y += self.direccion[1] * self.velocidad
