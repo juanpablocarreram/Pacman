@@ -1,5 +1,6 @@
 import pygame
 from Pacman import Pacman
+from Ghost import Ghost
 from pygame.locals import *
 
 # Cargamos las bibliotecas de OpenGL
@@ -95,10 +96,17 @@ path = []
 grid = []
 
 #pacman
-player = Pacman(matrix, MC, XPxToMC, YPxToMC)
+player = Pacman(matrix, MC, XPxToMC, YPxToMC,156,303)
 #fantasmas
-#ghosts = []
-
+ghosts = []
+for i in range(4):
+    """ Falta ver que coordenadas le pondremos a los fantasmas"""
+    random_x = np.random.choice(xMC)
+    random_y = np.random.choice(yMC)
+    while MC[YPxToMC[random_y]][XPxToMC[random_x]] == 0:
+        random_x = np.random.choice(xMC)
+        random_y = np.random.choice(yMC)
+    ghosts.append(Ghost(matrix, MC, XPxToMC, YPxToMC, random_x, random_y))
 
 pygame.init()
 
@@ -158,10 +166,10 @@ def Init():
     Texturas(img_ghost4)
     #se pasan las texturas a los objetos
     player.loadTextures(textures,1)
-    #ghosts[0].loadTextures(textures,2)
-    #ghosts[1].loadTextures(textures,3)
-    #ghosts[2].loadTextures(textures,4)
-    #ghosts[3].loadTextures(textures,5)
+    ghosts[0].loadTextures(textures,2)
+    ghosts[1].loadTextures(textures,3)
+    ghosts[2].loadTextures(textures,4)
+    ghosts[3].loadTextures(textures,5)
     
 def PlanoTexturizado():
     #Activate textures
@@ -186,9 +194,8 @@ def display():
     Axis()
     PlanoTexturizado()
     player.draw()
-    #for g in ghosts:
-    #    g.draw()
-    #    g.update2(player.position)
+    for g in ghosts:
+        g.draw()
     
 done = False
 Init()
@@ -221,9 +228,11 @@ while not done:
             player.update(direccionPacman)
         player.direccionFutura = direccionPacman
     player.performObjectCollisionLogic()
+    for g in ghosts:
+        g.performObjectCollisionLogic()
     display()
     pygame.display.flip()
-    clock.tick(120)
+    clock.tick(80)
 pygame.quit()
     
 
