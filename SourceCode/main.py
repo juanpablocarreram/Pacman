@@ -106,7 +106,7 @@ for i in range(4):
     while MC[YPxToMC[random_y]][XPxToMC[random_x]] == 0:
         random_x = np.random.choice(xMC)
         random_y = np.random.choice(yMC)
-    ghosts.append(Ghost(matrix, MC, XPxToMC, YPxToMC, random_x, random_y,player))
+    ghosts.append(Ghost(matrix, MC, XPxToMC, YPxToMC, random_x, random_y, xMC, yMC, player))
 
 pygame.init()
 

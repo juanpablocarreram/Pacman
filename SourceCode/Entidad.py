@@ -12,12 +12,12 @@ import numpy as np
 import pandas as pd
 
 class Entidad:
-    def __init__(self,mapa, mc, x_mc, y_mc,x_inicial, y_inicial):
+    def __init__(self,mapa, mc, x_px_to_mc, y_px_to_mc,x_inicial, y_inicial):
         #Matriz de control que almacena los IDs de las intersecciones
         self.MC = mc
         #Vectores que almacenan las coordenadas 
-        self.XPxToMC = x_mc
-        self.YPxToMC = y_mc
+        self.XPxToMC = x_px_to_mc
+        self.YPxToMC = y_px_to_mc
         #se resplanda el mapa en terminos de pixeles
         self.mapa = mapa
         #si el pacman se encuentra en estado inicial del juego
