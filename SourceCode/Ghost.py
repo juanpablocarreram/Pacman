@@ -35,22 +35,26 @@ class Ghost(Entidad):
             self.update(random.choice(listamovimientovalido))
 
     def movimiento_fantasma_heuristico(self):
-        indice_Y_fantasma = self.YPxToMC[self.y]
-        indice_X_fantasma = self.XPxToMC[self.x]
-        indice_Y_pacman = self.YPxToMC[self.pacman.y]
-        indice_X_pacman = self.XPxToMC[self.pacman.x]
-        actual = self.esquinaActual()
-        listamovimiento = mapa_numeros.get(actual)
-        listadecasillasposibles = []
-        listamovimientovalido = []
-        if listamovimiento is not None:
-            for movimiento in listamovimiento:
-                if(self.direccion != [-movimiento[0],-movimiento[1]] or actual==26 or actual==27):
-                    listadecasillasposibles.append(self.MC[indice_Y_fantasma + movimiento[1]][indice_X_fantasma + movimiento[0]])
-                    listamovimientovalido.append(movimiento)
-            siguientemovimiento = min(listamovimientovalido, key=lambda m: np.hypot((xMC[indice_X_fantasma + m[0]]) - self.pacman.x, (yMC[indice_Y_fantasma + m[1]]) - self.pacman.y))
-            self.update(siguientemovimiento)
-
+        esquinas_posibles = self.calcular_esquinas_vecinas((self.x,self.y))
+        if len(esquinas_posibles) > 0:
+            distancia_minima = (abs(esquinas_posibles[0][0] - self.pacman.x) ** 2 + abs(esquinas_posibles[0][1] - self.pacman.y) ** 2) ** 0.5
+            indice_esquina_mas_cercana = 0
+            for i in range(1, len(esquinas_posibles)):
+                distancia = (abs(esquinas_posibles[i][0] - self.pacman.x) ** 2 + abs(esquinas_posibles[i][1] - self.pacman.y) ** 2) ** 0.5
+                if distancia < distancia_minima:
+                    distancia_minima = distancia
+                    indice_esquina_mas_cercana = i
+            movimiento = [0,0]
+            if self.x < esquinas_posibles[indice_esquina_mas_cercana][0]:
+                movimiento[0] = 1
+            elif self.x > esquinas_posibles[indice_esquina_mas_cercana][0]:
+                movimiento[0] = -1
+            if self.y < esquinas_posibles[indice_esquina_mas_cercana][1]:
+                movimiento[1] = 1
+            elif self.y > esquinas_posibles[indice_esquina_mas_cercana][1]:
+                movimiento[1] = -1
+            self.update(movimiento)
+            
     def calcular_esquinas_vecinas(self,esquina):
         esquinas_vecinas = []
         indice_x = self.XPxToMC[esquina[0]]
