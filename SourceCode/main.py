@@ -106,7 +106,7 @@ for i in range(4):
     while MC[YPxToMC[random_y]][XPxToMC[random_x]] == 0:
         random_x = np.random.choice(xMC)
         random_y = np.random.choice(yMC)
-    ghosts.append(Ghost(matrix, MC, XPxToMC, YPxToMC, random_x, random_y))
+    ghosts.append(Ghost(matrix, MC, XPxToMC, YPxToMC, random_x, random_y,player))
 
 pygame.init()
 
@@ -229,7 +229,7 @@ while not done:
         player.direccionFutura = direccionPacman
     player.performObjectCollisionLogic()
     for g in ghosts:
-        g.performObjectCollisionLogic()
+        g.movimiento_fantasma_heuristico()
     display()
     pygame.display.flip()
     clock.tick(80)
