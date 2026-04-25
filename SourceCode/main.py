@@ -47,13 +47,13 @@ matrix = np.array(pd.io.parsers.read_csv(file_csv, header=None)).astype("int")
 
 #Matriz de Control para mapeo entre pixeles <-> coord donde se localizan esquinas
 MC = [
-    [10,0,21,0,11,10,0,21,0,11],
-    [24,0,25,21,23,23,21,25,0,22],
-    [12,0,22,12,11,10,13,24,0,13],
-    [0,0,0,10,23,23,11,0,0,0],
-    [26,0,25,22,0,0,24,25,0,27],
-    [0,0,0,24,0,0,22,0,0,0],
-    [10,0,25,23,11,10,23,25,0,11],
+    [10,28,21,28,11,10,28,21,28,11],
+    [24,28,25,21,23,23,21,25,28,22],
+    [12,28,22,12,11,10,13,24,28,13],
+    [-1,-1,29,10,23,23,11,29,-1,-1],
+    [26,28,25,22,-1,-1,24,25,28,27],
+    [-1,-1,29,24,-1,-1,22,29,-1,-1],
+    [10,28,25,23,11,10,23,25,28,11],
     [12,11,24,21,23,23,21,22,10,13],
     [10,23,13,12,11,10,13,12,23,11],
     [12,28,28,28,23,23,28,28,28,13]
@@ -96,14 +96,14 @@ path = []
 grid = []
 
 #pacman
-player = Pacman(matrix, MC, XPxToMC, YPxToMC,156,303)
+player = Pacman(matrix, MC, XPxToMC, YPxToMC,156,303, xMC, yMC)
 #fantasmas
 ghosts = []
 for i in range(4):
     """ Falta ver que coordenadas le pondremos a los fantasmas"""
     random_x = np.random.choice(xMC)
     random_y = np.random.choice(yMC)
-    while MC[YPxToMC[random_y]][XPxToMC[random_x]] == 0:
+    while MC[YPxToMC[random_y]][XPxToMC[random_x]] == -1:
         random_x = np.random.choice(xMC)
         random_y = np.random.choice(yMC)
     ghosts.append(Ghost(matrix, MC, XPxToMC, YPxToMC, random_x, random_y, xMC, yMC, player))
@@ -228,11 +228,13 @@ while not done:
             player.update(direccionPacman)
         player.direccionFutura = direccionPacman
     player.performObjectCollisionLogic()
-    for g in ghosts:
-        g.movimiento_fantasma_heuristico()
+    ghosts[0].movimiento_fantasma_aleatorio()
+    ghosts[1].movimiento_fantasma_heuristico()
+    ghosts[2].movimiento_fantasma_a_estrella(player.esquina_futura)
+    ghosts[3].movimiento_fantasma_a_estrella(player.esquina_reciente)
     display()
     pygame.display.flip()
-    clock.tick(80)
+    clock.tick(70)
 pygame.quit()
     
 
