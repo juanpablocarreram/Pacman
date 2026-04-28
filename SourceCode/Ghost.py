@@ -113,7 +113,7 @@ class Ghost(Entidad):
             self.update(movimiento)
 
     """ Movimiento del fantasma utilizando el algoritmo de A* """
-    def movimiento_fantasma_a_estrella(self,nodoObjetivo):
+    def movimiento_fantasma_a_estrella(self, nodoObjetivo, partner_ghost=None, partner_weight=0.8):
         if self.esquinaActual() != -1:
             if self.x == nodoObjetivo[0] and self.y == nodoObjetivo[1]:
                 self.movimiento_fantasma_heuristico()
@@ -121,6 +121,64 @@ class Ghost(Entidad):
             camino = self.a_estrella((self.x,self.y), nodoObjetivo)
             if camino is not None and len(camino) > 1:
                 siguiente_esquina = camino[1]
+                reverse_dir = [-self.direccion[0], -self.direccion[1]] if self.direccion != [0,0] else None
+                if partner_ghost is not None:
+                    esquinas_posibles = self.calcular_esquinas_vecinas((self.x, self.y))
+                    valid_esquinas = []
+                    for esquina in esquinas_posibles:
+                        movimiento_candidato = [0, 0]
+                        if self.x < esquina[0]:
+                            movimiento_candidato[0] = 1
+                        elif self.x > esquina[0]:
+                            movimiento_candidato[0] = -1
+                        if self.y < esquina[1]:
+                            movimiento_candidato[1] = 1
+                        elif self.y > esquina[1]:
+                            movimiento_candidato[1] = -1
+                        if reverse_dir is not None and movimiento_candidato == reverse_dir:
+                            continue
+                        valid_esquinas.append(esquina)
+                    if valid_esquinas:
+                        mejor_score = -float('inf')
+                        mejor_esquina = siguiente_esquina if (reverse_dir is None or [int(self.x < siguiente_esquina[0]) - int(self.x > siguiente_esquina[0]), int(self.y < siguiente_esquina[1]) - int(self.y > siguiente_esquina[1])] != reverse_dir) else valid_esquinas[0]
+                        for esquina in valid_esquinas:
+                            distancia_pacman = ((esquina[0] - self.pacman.x) ** 2 + (esquina[1] - self.pacman.y) ** 2) ** 0.5
+                            distancia_partner = ((esquina[0] - partner_ghost.x) ** 2 + (esquina[1] - partner_ghost.y) ** 2) ** 0.5
+                            path_bonus = 2 if esquina == siguiente_esquina else 0
+                            score = -distancia_pacman + partner_weight * distancia_partner + path_bonus
+                            if score > mejor_score:
+                                mejor_score = score
+                                mejor_esquina = esquina
+                        siguiente_esquina = mejor_esquina
+                else:
+                    movimiento_siguiente = [0,0]
+                    if self.x < siguiente_esquina[0]:
+                        movimiento_siguiente[0] = 1
+                    elif self.x > siguiente_esquina[0]:
+                        movimiento_siguiente[0] = -1
+                    if self.y < siguiente_esquina[1]:
+                        movimiento_siguiente[1] = 1
+                    elif self.y > siguiente_esquina[1]:
+                        movimiento_siguiente[1] = -1
+                    if reverse_dir is not None and movimiento_siguiente == reverse_dir:
+                        esquinas_posibles = self.calcular_esquinas_vecinas((self.x, self.y))
+                        alternativa = None
+                        for esquina in esquinas_posibles:
+                            movimiento_candidato = [0, 0]
+                            if self.x < esquina[0]:
+                                movimiento_candidato[0] = 1
+                            elif self.x > esquina[0]:
+                                movimiento_candidato[0] = -1
+                            if self.y < esquina[1]:
+                                movimiento_candidato[1] = 1
+                            elif self.y > esquina[1]:
+                                movimiento_candidato[1] = -1
+                            if movimiento_candidato == reverse_dir:
+                                continue
+                            if alternativa is None or self.calcular_manhattan(esquina, nodoObjetivo) < self.calcular_manhattan(alternativa, nodoObjetivo):
+                                alternativa = esquina
+                        if alternativa is not None:
+                            siguiente_esquina = alternativa
                 movimiento = [0,0]
                 if self.x < siguiente_esquina[0]:
                     movimiento[0] = 1
